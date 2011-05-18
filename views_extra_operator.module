@@ -1,0 +1,40 @@
+<?php
+/*
+Tell Drupal the directory where views modules are stored.
+*/
+function views_extra_operator_views_api() {
+  return array(
+  'api' => 2,
+  //'path' => drupal_get_path('module', 'views_extra_operator') . '/includes',
+  );
+}
+
+/*
+ This is the function used to replace values in the $data array. See below.
+*/
+function views_extra_operator_update_handlers(&$value, &$key) {
+  if ($key == "handler" && $value == "views_handler_argument_string") {
+    $value = "views_extra_operator_views_handler_argument_string";
+  }
+  if ($key == "handler" && $value == "content_handler_argument_string") {
+    $value = "views_extra_operator_content_handler_argument_string";
+  }
+  if ($key == "handler" && $value == "views_handler_argument_node_nid") {
+    $value = "views_extra_operator_views_handler_argument_node_nid";
+  }
+  if ($key == "handler" && $value == "content_handler_argument_numeric") {
+    $value = "views_extra_operator_content_handler_argument_numeric";
+  }
+  if ($key == "handler" && $value == "views_handler_argument_numeric") {
+    $value = "views_extra_operator_views_handler_argument_numeric";
+  }
+}
+
+/*
+This will be to override default handlers and use mine.
+It will browser the $data array and replace the default handlers by the one we've created.
+*/
+function views_extra_operator_views_data_alter(&$data) {
+  array_walk_recursive($data, "views_extra_operator_update_handlers");
+  //dprint_r($data); // dpm() is a part of devel module.
+}

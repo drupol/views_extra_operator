@@ -8,10 +8,10 @@ Informations:
 This is my first Views module, I'm just pretty new in Views module hacking !
 This is a very simple module who add new operators to view's arguments.
 It can be very useful.
-Currently, only text fields are working.
-I'm planning to add numeric fields and date fields.
-I tried to add numeric fields support but did not succeeded, any help is welcome !
+Currently, text fields(CCK also) and numeric fields are working.
+I'm planning to add date fields soon.
 
 Miscellaneous:
 --------------
 Many thanks to abaddon on IRC: #drupal-support on Freenode.
+Thanks to HitmanInWis (http://drupal.org/user/1295612)

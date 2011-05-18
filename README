@@ -9,7 +9,11 @@ This is my first Views module, I'm just pretty new in Views module hacking !
 This is a very simple module who add new operators to view's arguments.
 It can be very useful.
 Currently, text fields(CCK also) and numeric fields are working.
+
+The Future:
+-----------
 I'm planning to add date fields soon.
+I'm planning to provides hooks to alter the operators and the argument itself.
 
 Miscellaneous:
 --------------

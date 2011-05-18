@@ -1,6 +1,5 @@
 <?php
-// $Id$
-require_once('views_extra_operator_common.inc');
+module_load_include('inc', 'views_extra_operator', 'includes/views_extra_operator_common');
 
 /**
  * @file

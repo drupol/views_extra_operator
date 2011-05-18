@@ -1,7 +1,6 @@
 <?php
-// $Id$
-require_once(drupal_get_path('module', 'content').'/includes/views/handlers/content_handler_argument_string.inc');
-require_once('views_extra_operator_common.inc');
+module_load_include('inc', 'content', 'includes/views/handlers/content_handler_argument_string');
+module_load_include('inc', 'views_extra_operator', 'includes/views_extra_operator_common');
 
 /**
  * @file

@@ -5,10 +5,9 @@ Location: Belgium
 
 Informations:
 -------------
-This is my first Views module, I'm just pretty new in Views module hacking !
 This is a very simple module who add new operators to view's arguments.
-It can be very useful.
-Currently, text fields(CCK also) and numeric fields are working.
+Currently, text fields and numeric fields are working, CCK fields too.
+It allows you to use LIKE, NOT LIKE(etc etc...) instead of the default '=' for argument handling.
 
 The Future:
 -----------

@@ -5,7 +5,6 @@ module_load_include('inc', 'views_extra_operator', 'includes/views_extra_operato
  * @file
  * This is the handler for CCK type integer.
  */
-
 class views_extra_operator_content_handler_argument_numeric extends views_handler_argument_numeric {
 
   function options_form(&$form, &$form_state) {

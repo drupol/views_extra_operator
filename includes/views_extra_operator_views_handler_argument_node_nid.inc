@@ -6,7 +6,6 @@ module_load_include('inc', 'views_extra_operator', 'includes/views_extra_operato
  * @file
  * This is the handler for node NID.
  */
-
 class views_extra_operator_views_handler_argument_node_nid extends views_handler_argument_numeric {
 
   function options_form(&$form, &$form_state) {

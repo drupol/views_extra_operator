@@ -9,7 +9,26 @@ This is a very simple module who add new operators to view's arguments.
 Currently, text fields and numeric fields are working, CCK fields too.
 It allows you to use LIKE, NOT LIKE(etc etc...) instead of the default '=' for argument handling.
 
-Supported operations:
+Supported SQL Functions:
+------------------------
+- Ascii
+- Format
+- Hex
+- Length
+- Locate
+- Lower
+- Oct
+- Ord
+- Reverse
+- Right
+- Rpad
+- Soundex
+- Substring
+- Substring Index
+- Unhex
+- Upper
+
+Supported operators:
 ---------------------
 - Is equal to
 - Is not equal to
@@ -21,13 +40,13 @@ Supported operations:
 - Ends with
 - Does not end with
 - Does not contain
-- Argument length greater
-- Argument length greater or equal
-- Argument length lesser
-- Argument length lesser or equal
-- Argument length different
-- Argument length is between
-- Argument length is not between
+- Is greater
+- Is greater or equal
+- Is lesser
+- Is lesser or equal
+- Is different
+- Is between
+- Is not between
 
 The Future:
 -----------

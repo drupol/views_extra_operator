@@ -7,7 +7,7 @@ class views_extra_operator_views_sort extends views_handler_sort {
    */
   function query() {
     $this->ensure_my_table();
-    
+
     $this->sort_field = views_extra_operator_rewrite_field($this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
 
     //print_r($this->options);
@@ -18,15 +18,12 @@ class views_extra_operator_views_sort extends views_handler_sort {
 
   function option_definition() {
     $options = parent::option_definition();
-    
+
     $options['order'] = array('default' => 'ASC');
 
     return $options;
   }
 
-  /**
-   * Display whether or not the sort order is ascending or descending
-   */
   function admin_summary() {
     switch ($this->options['order']) {
       case 'ASC':
@@ -39,7 +36,13 @@ class views_extra_operator_views_sort extends views_handler_sort {
         $type = t('desc');
         break;
     }
-    return '<span class="views-ascending"><span>' . $type . '</span></span>';
+
+    $fct = null;
+    if ($this->options['veo_functions']['veo_fct']) {
+      $fct = strtoupper($this->options['veo_functions']['veo_fct']).'() ';
+    }
+
+    return '<span class="views-ascending"><span>' . $fct . '' . $type . '</span></span>';
   }
 
   /**
@@ -48,7 +51,7 @@ class views_extra_operator_views_sort extends views_handler_sort {
   function options_form(&$form, &$form_state) {
     views_extra_operator_options_form_string($this, $form, $form_state);
     unset($form['veo_operator']);
-    
+
     $form['order'] = array(
       '#type' => 'radios',
       '#title' => t('Sort order'),

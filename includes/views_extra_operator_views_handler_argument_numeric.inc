@@ -16,7 +16,18 @@ class views_extra_operator_views_handler_argument_numeric extends views_handler_
     views_extra_operator_query_string($this);
   }
 
+  function admin_summary() {
+    $fct = NULL;
+    if ($this->options['veo_functions']['veo_fct']) {
+      $fct = strtoupper($this->options['veo_functions']['veo_fct']).'() ';
+    }
+    $operator = NULL;
+    if ($this->options['veo_operator']['veo_operator']) {
+      $operator = strtoupper($this->options['veo_operator']['veo_operator']).' ';
+    }
 
+    return '<span class="views-ascending"><span>' . $fct . '' . $operator . '</span></span>';
+  }
 
 
 }

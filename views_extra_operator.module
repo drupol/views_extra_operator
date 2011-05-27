@@ -37,8 +37,5 @@ function views_extra_operator_update_handlers(&$value, &$key) {
  * It will browse the $data array and replace the default handlers by the one we've created.
  */
 function views_extra_operator_views_data_alter(&$data) {
-
-  //print_r($data);
-
   array_walk_recursive($data, "views_extra_operator_update_handlers");
 }

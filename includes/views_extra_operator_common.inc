@@ -2,17 +2,17 @@
 
 function views_extra_operator_options_form_string(&$_this, &$form, &$form_state) {
 
-  $form['arg_fieldset'] = array(
+  $form['veo_functions'] = array(
       '#type' => 'fieldset',
       '#title' => 'Argument functions'
   );
 
-  $form['arg_fieldset']['arg_fct'] = array(
+  $form['veo_functions']['veo_fct'] = array(
       '#type' => 'select',
       '#title' => t('SQL Function'),
-      '#optional' => TRUE,
-      '#description' => t('Choose which SQL function to apply to the argument.'),
-      '#options' => array(
+      '#description' => t('Choose which SQL function to apply'),
+        '#options' => array(
+          '' => t('<select>'),
           'ascii' => t('Ascii'),
           'format' => t('Format'),
           'hex' => t('Hex'),
@@ -30,24 +30,24 @@ function views_extra_operator_options_form_string(&$_this, &$form, &$form_state)
           'unhex' => t('Unhex'),
           'upper' => t('Upper')
       ),
-      '#default_value' => $_this->options['arg_fieldset']['arg_fct'],
+      //'#default_value' => isset($_this->options['veo_functions']['veo_fct'])  ? $_this->options['veo_functions']['veo_fct'] : NULL
   );
 
-  $form['arg_fieldset']['arg_fct_parameters'] = array(
+  $form['veo_functions']['veo_fct_parameters'] = array(
       '#type' => 'textfield',
       '#title' => t('Parameters'),
       '#description' => t('If the selected SQL function needs extra parameters, add them here, comma separated.'),
-      '#default_value' => $_this->options['arg_fieldset']['arg_fct_parameters'],
+      '#default_value' => $_this->options['veo_functions']['veo_fct_parameters'],
   );
 
-  $form['arg_operator'] = array(
+  $form['veo_operator'] = array(
       '#type' => 'fieldset',
       '#title' => 'Argument operator'
   );
 
-  $form['arg_operator']['operator'] = array(
+  $form['veo_operator']['veo_operator'] = array(
       '#type' => 'select',
-      '#title' => t('Argument operator'),
+      '#title' => t('Operator'),
       '#description' => t('Choose the operator'),
       '#options' => array(
           'op_equal' => t('Is equal to'),
@@ -68,75 +68,18 @@ function views_extra_operator_options_form_string(&$_this, &$form, &$form_state)
           'op_between' => t('Is between'),
           'op_nbetween' => t('Is not between'),
       ),
-      '#default_value' => $_this->options['arg_operator']['operator'],
+      '#default_value' => $_this->options['veo_operator']['veo_operator'],
   );
 }
 
-function views_extra_operator_options_filter_form_string(&$_this, &$form, &$form_state) {
-
-  $form['filter_fieldset'] = array(
-      '#type' => 'fieldset',
-      '#title' => 'Filter functions'
-  );
-
-  $form['filter_fieldset']['filter_fct'] = array(
-      '#type' => 'select',
-      '#title' => t('SQL Function'),
-      '#optional' => TRUE,
-      '#description' => t('Choose which SQL function to apply to the filter.'),
-      '#options' => array(
-          'ascii' => t('Ascii'),
-          'format' => t('Format'),
-          'hex' => t('Hex'),
-          'length' => t('Length'),
-          'locate' => t('Locate'),
-          'lower' => t('Lower'),
-          'oct' => t('Oct'),
-          'ord' => t('Ord'),
-          'reverse' => t('Reverse'),
-          'right' => t('Right'),
-          'rpad' => t('Rpad'),
-          'soundex' => t('Soundex'),
-          'substring' => t('Substring'),
-          'substring_index' => t('Substring Index'),
-          'unhex' => t('Unhex'),
-          'upper' => t('Upper')
-      ),
-      '#default_value' => $_this->options['filter_fieldset']['filter_fct'],
-  );
-
-  $form['filter_fieldset']['filter_fct_parameters'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Parameters'),
-      '#description' => t('If the selected SQL function needs extra parameters, add them here, comma separated.'),
-      '#default_value' => $_this->options['filter_fieldset']['filter_fct_parameters'],
-  );
-
-}
-
-function views_extra_operator_query_string(&$_this) {
-  $argument = $_this->argument;
-  $arg_fct = $_this->options['arg_fieldset']['arg_fct'];
-  $arg_fct_parameters = $_this->options['arg_fieldset']['arg_fct_parameters'];
-
-  if (!empty($_this->options['transform_dash'])) {
-    $argument = strtr($argument, '-', ' ');
-  }
-
-  $_this->ensure_my_table();
-  if (empty($_this->options['glossary'])) {
-    $field = "$_this->table_alias.$_this->real_field";
-  } else {
-    $field = $_this->get_formula();
-  }
-
-  switch ($arg_fct) {
+function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
+  switch ($fct) {
     case 'ascii':
       $field = "ASCII($field)";
       break;
     case 'format':
-      $arg_fct_parameters = (int) $arg_fct_parameters;
-      $field = "FORMAT($field, $arg_fct_parameters)";
+      $fct_parameters = (int) $fct_parameters;
+      $field = "FORMAT($field, $fct_parameters)";
       break;
     case 'hex':
       $field = "HEX($field)";
@@ -148,7 +91,7 @@ function views_extra_operator_query_string(&$_this) {
       $field = "LENGTH($field)";
       break;
     case 'locate':
-      $substr = $arg_fct_parameters;
+      $substr = $fct_parameters;
       $field = "LOCATE($substr, $field)";
       break;
     case 'lower':
@@ -164,22 +107,22 @@ function views_extra_operator_query_string(&$_this) {
       $field = "REVERSE($field)";
       break;
     case 'right':
-      $$arg_fct_parameters = (int) $arg_fct_parameters;
-      $field = "RIGHT($field, $arg_fct_parameters)";
+      $fct_parameters = (int) $fct_parameters;
+      $field = "RIGHT($field, $fct_parameters)";
       break;
     case 'rpad':
-      list($len, $padstr) = explode(',', $arg_fct_parameters);
+      list($len, $padstr) = explode(',', $fct_parameters);
       $field = "RPAD($field, $len, $padstr)";
       break;
     case 'soundex':
       $field = "SOUNDEX($field)";
       break;
     case 'substring':
-      list($pos, $len) = explode(',', $arg_fct_parameters);
+      list($pos, $len) = explode(',', $fct_parameters);
       $field = "SUBSTRING($field, $pos, $len)";
       break;
     case 'substring_index':
-      list($delimt, $count) = explode(',', $arg_fct_parameters);
+      list($delimt, $count) = explode(',', $fct_parameters);
       $field = "SUBSTRING_INDEX($field, $delim, $count)";
       break;
     case 'unhex':
@@ -190,7 +133,29 @@ function views_extra_operator_query_string(&$_this) {
       break;
   }
 
-  switch ($_this->options['arg_operator']['operator']) {
+   return $field;
+
+  }
+  
+function views_extra_operator_query_string(&$_this) {
+  $argument = $_this->argument;
+  $fct = $_this->options['veo_functions']['veo_fct'];
+  $fct_parameters = $_this->options['veo_functions']['veo_fct_parameters'];
+
+  if (!empty($_this->options['transform_dash'])) {
+    $argument = strtr($argument, '-', ' ');
+  }
+
+  $_this->ensure_my_table();
+  if (empty($_this->options['glossary'])) {
+    $field = "$_this->table_alias.$_this->real_field";
+  } else {
+    $field = $_this->get_formula();
+  }
+
+  $field = views_extra_operator_rewrite_field($field, $fct, $fct_parameters);
+
+  switch ($_this->options['veo_operator']['veo_operator']) {
     case 'op_equal':
       $_this->query->add_where(0, "$field = '%s'", $argument);
       break;
@@ -293,78 +258,18 @@ function views_extra_operator_query_string(&$_this) {
 }
 
 
-function views_extra_operator_query_filter_string(&$_this) {
+function views_extra_operator_query_sort_string(&$_this) {
   
-  $filter = $_this->argument;
+  $sort = $_this->argument;
   
-  $filter_fct = $_this->options['filter_fieldset']['filter_fct'];
-  $filter_fct_parameters = $_this->options['filter_fieldset']['filter_fct_parameters'];
+  $fct = $_this->options['filter_fieldset']['filter_fct'];
+  $fct_parameters = $_this->options['filter_fieldset']['filter_fct_parameters'];
 
   $_this->ensure_my_table();
 
   $field = $_this->real_field;
-
-  switch ($filter_fct) {
-    case 'ascii':
-      $field = "ASCII($field)";
-      break;
-    case 'format':
-      $arg_fct_parameters = (int) $filter_fct_parameters;
-      $field = "FORMAT($field, $filter_fct_parameters)";
-      break;
-    case 'hex':
-      $field = "HEX($field)";
-      break;
-    case 'length':
-      $field = "LENGTH($field)";
-      break;
-    case 'length':
-      $field = "LENGTH($field)";
-      break;
-    case 'locate':
-      $substr = $filter_fct_parameters;
-      $field = "LOCATE($substr, $field)";
-      break;
-    case 'lower':
-      $field = "LOWER($field)";
-      break;
-    case 'oct':
-      $field = "OCT($field)";
-      break;
-    case 'ord':
-      $field = "ORD($field)";
-      break;
-    case 'reverse':
-      $field = "REVERSE($field)";
-      break;
-    case 'right':
-      $$arg_fct_parameters = (int) $filter_fct_parameters;
-      $field = "RIGHT($field, $arg_fct_parameters)";
-      break;
-    case 'rpad':
-      list($len, $padstr) = explode(',', $filter_fct_parameters);
-      $field = "RPAD($field, $len, $padstr)";
-      break;
-    case 'soundex':
-      $field = "SOUNDEX($field)";
-      break;
-    case 'substring':
-      list($pos, $len) = explode(',', $filter_fct_parameters);
-      $field = "SUBSTRING($field, $pos, $len)";
-      break;
-    case 'substring_index':
-      list($delimt, $count) = explode(',', $filter_fct_parameters);
-      $field = "SUBSTRING_INDEX($field, $delim, $count)";
-      break;
-    case 'unhex':
-      $field = "UNHEX($field)";
-      break;
-    case 'upper':
-      $field = "UPPER($field)";
-      break;
-  }
   
-  $_this->sort_field = $field;
+  $_this->sort_field = views_extra_operator_rewrite_field($field, $fct, $fct_parameters);
   
 }
 

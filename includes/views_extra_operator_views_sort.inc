@@ -8,7 +8,10 @@ class views_extra_operator_views_sort extends views_handler_sort {
   function query() {
     $this->ensure_my_table();
     
-    views_extra_operator_query_filter_string($this);
+    $this->sort_field = views_extra_operator_rewrite_field($this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
+
+    //print_r($this->options);
+
 
     $this->query->add_orderby($this->table_alias, NULL, $this->options['order'], $this->sort_field);
   }
@@ -43,7 +46,9 @@ class views_extra_operator_views_sort extends views_handler_sort {
    * Basic options for all sort criteria
    */
   function options_form(&$form, &$form_state) {
-    views_extra_operator_options_filter_form_string($this, $form, $form_state);
+    views_extra_operator_options_form_string($this, $form, $form_state);
+    unset($form['veo_operator']);
+    
     $form['order'] = array(
       '#type' => 'radios',
       '#title' => t('Sort order'),

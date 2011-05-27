@@ -72,6 +72,48 @@ function views_extra_operator_options_form_string(&$_this, &$form, &$form_state)
   );
 }
 
+function views_extra_operator_options_filter_form_string(&$_this, &$form, &$form_state) {
+
+  $form['filter_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Filter functions'
+  );
+
+  $form['filter_fieldset']['filter_fct'] = array(
+      '#type' => 'select',
+      '#title' => t('SQL Function'),
+      '#optional' => TRUE,
+      '#description' => t('Choose which SQL function to apply to the filter.'),
+      '#options' => array(
+          'ascii' => t('Ascii'),
+          'format' => t('Format'),
+          'hex' => t('Hex'),
+          'length' => t('Length'),
+          'locate' => t('Locate'),
+          'lower' => t('Lower'),
+          'oct' => t('Oct'),
+          'ord' => t('Ord'),
+          'reverse' => t('Reverse'),
+          'right' => t('Right'),
+          'rpad' => t('Rpad'),
+          'soundex' => t('Soundex'),
+          'substring' => t('Substring'),
+          'substring_index' => t('Substring Index'),
+          'unhex' => t('Unhex'),
+          'upper' => t('Upper')
+      ),
+      '#default_value' => $_this->options['filter_fieldset']['filter_fct'],
+  );
+
+  $form['filter_fieldset']['filter_fct_parameters'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Parameters'),
+      '#description' => t('If the selected SQL function needs extra parameters, add them here, comma separated.'),
+      '#default_value' => $_this->options['filter_fieldset']['filter_fct_parameters'],
+  );
+
+}
+
 function views_extra_operator_query_string(&$_this) {
   $argument = $_this->argument;
   $arg_fct = $_this->options['arg_fieldset']['arg_fct'];
@@ -249,3 +291,80 @@ function views_extra_operator_query_string(&$_this) {
       break;
   }
 }
+
+
+function views_extra_operator_query_filter_string(&$_this) {
+  
+  $filter = $_this->argument;
+  
+  $filter_fct = $_this->options['filter_fieldset']['filter_fct'];
+  $filter_fct_parameters = $_this->options['filter_fieldset']['filter_fct_parameters'];
+
+  $_this->ensure_my_table();
+
+  $field = $_this->real_field;
+
+  switch ($filter_fct) {
+    case 'ascii':
+      $field = "ASCII($field)";
+      break;
+    case 'format':
+      $arg_fct_parameters = (int) $filter_fct_parameters;
+      $field = "FORMAT($field, $filter_fct_parameters)";
+      break;
+    case 'hex':
+      $field = "HEX($field)";
+      break;
+    case 'length':
+      $field = "LENGTH($field)";
+      break;
+    case 'length':
+      $field = "LENGTH($field)";
+      break;
+    case 'locate':
+      $substr = $filter_fct_parameters;
+      $field = "LOCATE($substr, $field)";
+      break;
+    case 'lower':
+      $field = "LOWER($field)";
+      break;
+    case 'oct':
+      $field = "OCT($field)";
+      break;
+    case 'ord':
+      $field = "ORD($field)";
+      break;
+    case 'reverse':
+      $field = "REVERSE($field)";
+      break;
+    case 'right':
+      $$arg_fct_parameters = (int) $filter_fct_parameters;
+      $field = "RIGHT($field, $arg_fct_parameters)";
+      break;
+    case 'rpad':
+      list($len, $padstr) = explode(',', $filter_fct_parameters);
+      $field = "RPAD($field, $len, $padstr)";
+      break;
+    case 'soundex':
+      $field = "SOUNDEX($field)";
+      break;
+    case 'substring':
+      list($pos, $len) = explode(',', $filter_fct_parameters);
+      $field = "SUBSTRING($field, $pos, $len)";
+      break;
+    case 'substring_index':
+      list($delimt, $count) = explode(',', $filter_fct_parameters);
+      $field = "SUBSTRING_INDEX($field, $delim, $count)";
+      break;
+    case 'unhex':
+      $field = "UNHEX($field)";
+      break;
+    case 'upper':
+      $field = "UPPER($field)";
+      break;
+  }
+  
+  $_this->sort_field = $field;
+  
+}
+

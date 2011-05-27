@@ -28,7 +28,11 @@ function views_extra_operator_views_handlers() {
       ),
       'views_extra_operator_views_handler_argument_numeric' => array(
         'parent' => 'views_handler_argument_numeric'
+      ),
+      'views_extra_operator_views_sort' => array(
+        'parent' => 'views_handler_sort'
       )
+
     )
   );
 }

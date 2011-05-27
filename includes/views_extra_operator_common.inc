@@ -30,7 +30,7 @@ function views_extra_operator_options_form_string(&$_this, &$form, &$form_state)
           'unhex' => t('Unhex'),
           'upper' => t('Upper')
       ),
-      //'#default_value' => isset($_this->options['veo_functions']['veo_fct'])  ? $_this->options['veo_functions']['veo_fct'] : NULL
+      '#default_value' => isset($_this->options['veo_functions']['veo_fct'])  ? $_this->options['veo_functions']['veo_fct'] : NULL
   );
 
   $form['veo_functions']['veo_fct_parameters'] = array(

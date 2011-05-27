@@ -5,9 +5,9 @@ Location: Belgium
 
 Informations:
 -------------
-This is a very simple module who add new operators to view's arguments.
-Currently, text fields and numeric fields are working, CCK fields too.
-It allows you to use LIKE, NOT LIKE(etc etc...) instead of the default '=' for argument handling.
+This is a very simple module who add new operators to view's arguments and/or sort fields.
+It allows you to use LIKE, NOT LIKE(etc etc...) instead of the default '=' for fields handling.
+You can also preprocess the field with SQL functions like LENGTH(), etc etc. (see the list below).
 
 Supported SQL Functions:
 ------------------------

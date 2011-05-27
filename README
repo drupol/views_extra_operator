@@ -48,12 +48,10 @@ Supported operators:
 - Is between
 - Is not between
 
-
 The Future:
 -----------
 I'm planning to add date fields soon.
 I'm planning to provides hooks to alter the operators and the argument itself.
-
 
 Miscellaneous:
 --------------

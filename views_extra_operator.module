@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Tell Drupal the directory where views modules are stored.
  */

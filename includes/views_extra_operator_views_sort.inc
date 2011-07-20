@@ -10,10 +10,7 @@ class views_extra_operator_views_sort extends views_handler_sort {
 
     $this->sort_field = views_extra_operator_rewrite_field($this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
 
-    //print_r($this->options);
-
-
-    $this->query->add_orderby($this->table_alias, NULL, $this->options['order'], $this->sort_field);
+    $this->query->add_orderby($this->table_alias, NULL, $this->options['order'], $this->table_alias.'_'.$this->sort_field);
   }
 
   function option_definition() {

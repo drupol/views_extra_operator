@@ -139,23 +139,13 @@ function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
   
 function views_extra_operator_query_string(&$_this) {
   $argument = $_this->argument;
-  $multi = false;
-  if (!empty($_this->options['break_phrase'])
-        && ($_this->options['veo_operator']['veo_operator'] == 'op_equal' || $_this->options['veo_operator']['veo_operator'] == 'op_nequal')) {
-    views_break_phrase($argument, &$this);
-    if (count($_this->value) > 1) {
-      $multi = true;
-    }
+  $fct = $_this->options['veo_functions']['veo_fct'];
+  $fct_parameters = $_this->options['veo_functions']['veo_fct_parameters'];
+
+  if (!empty($_this->options['transform_dash'])) {
+    $argument = strtr($argument, '-', ' ');
   }
-  else {
-    $fct = $_this->options['veo_functions']['veo_fct'];
-    $fct_parameters = $_this->options['veo_functions']['veo_fct_parameters'];
-  
-    if (!empty($_this->options['transform_dash'])) {
-      $argument = strtr($argument, '-', ' ');
-    }
-  }
-  
+
   $_this->ensure_my_table();
   if (empty($_this->options['glossary'])) {
     $field = "$_this->table_alias.$_this->real_field";
@@ -164,23 +154,13 @@ function views_extra_operator_query_string(&$_this) {
   }
 
   $field = views_extra_operator_rewrite_field($field, $fct, $fct_parameters);
-  
+
   switch ($_this->options['veo_operator']['veo_operator']) {
     case 'op_equal':
-      if ($multi) {
-        $placeholders = implode(', ', array_fill(0, sizeof($_this->value), '%d'));
-        $_this->query->add_where(0, "$field IN ($placeholders)", $_this->value);
-      } else {
-        $_this->query->add_where(0, "$field = '%s'", $argument);
-      }
+      $_this->query->add_where(0, "$field = '%s'", $argument);
       break;
     case 'op_nequal':
-      if ($multi) {
-        $placeholders = implode(', ', array_fill(0, sizeof($_this->value), '%d'));
-        $_this->query->add_where(0, "$field NOT IN ($placeholders)", $_this->value);
-      } else {
-        $_this->query->add_where(0, "$field != '%s'", $argument);
-      }
+      $_this->query->add_where(0, "$field != '%s'", $argument);
       break;
     case 'op_contains':
       $_this->query->add_where(0, "$field LIKE '%%%s%%'", $argument);

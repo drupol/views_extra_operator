@@ -163,6 +163,14 @@ function views_extra_operator_query_string(&$_this) {
     $field = $_this->get_formula();
   }
 
+  if (!isset($_this->options['veo_operator']['veo_operator'])) {
+    if ($_this->options['not'] == 0) {
+      $_this->options['veo_operator']['veo_operator'] = 'op_equal';
+    } else {
+      $_this->options['veo_operator']['veo_operator'] = 'op_nequal';
+    }
+  }
+ 
   $field = views_extra_operator_rewrite_field($field, $fct, $fct_parameters);
   
   switch ($_this->options['veo_operator']['veo_operator']) {

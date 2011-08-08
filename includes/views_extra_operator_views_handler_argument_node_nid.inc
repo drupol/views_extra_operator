@@ -11,6 +11,9 @@ class views_extra_operator_views_handler_argument_node_nid extends views_handler
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     views_extra_operator_options_form_string($this, $form, $form_state);
+
+    unset($form['not']);
+
   }
 
   function query() {

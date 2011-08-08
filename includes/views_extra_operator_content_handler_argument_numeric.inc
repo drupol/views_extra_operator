@@ -10,6 +10,9 @@ class views_extra_operator_content_handler_argument_numeric extends views_handle
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     views_extra_operator_options_form_string($this, $form, $form_state);
+
+    unset($form['not']);
+
   }
 
   function query() {

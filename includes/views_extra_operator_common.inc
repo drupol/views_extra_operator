@@ -140,9 +140,12 @@ function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
 function views_extra_operator_query_string(&$_this) {
   $argument = $_this->argument;
   $multi = false;
-  if (!empty($_this->options['break_phrase'])
-        && ($_this->options['veo_operator']['veo_operator'] == 'op_equal' || $_this->options['veo_operator']['veo_operator'] == 'op_nequal')) {
+  
+  $operator_multi = array('op_equal', 'op_nequal', 'op_ncontains');
+  
+  if (!empty($_this->options['break_phrase']) && (in_array($_this->options['veo_operator']['veo_operator'], $operator_multi))) {
     views_break_phrase($argument, &$this);
+    //print_r($_this->value);
     if (count($_this->value) > 1) {
       $multi = true;
     }
@@ -247,8 +250,18 @@ function views_extra_operator_query_string(&$_this) {
     case 'op_nends_with':
       $_this->query->add_where(0, "$field NOT LIKE '%%%s'", $argument);
       break;
-    case 'op_ncontains':
-      $_this->query->add_where(0, "$field NOT LIKE '%%%s%%'", $argument);
+    case 'op_ncontains':   
+      if ($multi) {
+        foreach ($_this->value as $value) {
+          $where[]  = "$field NOT LIKE '%%%s%%'";
+          $values[] = trim($value, " ,!?"); 
+        }
+        $where = implode(' '.$_this->operator.' ', $where);
+        $_this->query->add_where(0, $where, $values);  
+        
+      } else {
+        $_this->query->add_where(0, "$field NOT LIKE '%%%s%%'", $argument);      
+      }
       break;
     case 'op_greater':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);

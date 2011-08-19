@@ -7,10 +7,12 @@ class views_extra_operator_views_sort extends views_handler_sort {
    */
   function query() {
     $this->ensure_my_table();
-
-    $this->sort_field = views_extra_operator_rewrite_field($this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
-
-    $this->query->add_orderby($this->table_alias, NULL, $this->options['order'], $this->table_alias.'_'.$this->sort_field);
+    if (empty($this->options['veo_functions']['veo_fct'])) {
+      $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
+    } else {
+      $this->sort_field = views_extra_operator_rewrite_field($this->table_alias.'.'.$this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
+      $this->query->add_orderby(NULL, $this->sort_field, $this->options['order'], $this->options['veo_functions']['veo_fct'].'_'.$this->table_alias.'_'.$this->real_field);
+    }
   }
 
   function option_definition() {

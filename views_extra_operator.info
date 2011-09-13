@@ -1,5 +1,0 @@
-name = "Views Extra Operator"
-description = "Apply functions and/or adds extra operator to views arguments fields, sort fields."
-core = "6.x"
-dependencies[] = views
-package = "Views"

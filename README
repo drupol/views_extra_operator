@@ -50,6 +50,7 @@ Supported operators:
 
 The Future:
 -----------
+I'm currently working on a Views 3 version.
 I'm planning to add date fields soon.
 I'm planning to provides hooks to alter the operators and the argument itself.
 

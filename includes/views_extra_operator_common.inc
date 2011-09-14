@@ -3,82 +3,89 @@
 function views_extra_operator_options_form_string(&$_this, &$form, &$form_state) {
 
   $form['veo_functions'] = array(
-      '#type' => 'fieldset',
-      '#title' => 'Argument functions'
+    '#type' => 'fieldset',
+    '#title' => 'Argument functions'
   );
 
   $form['veo_functions']['veo_fct'] = array(
-      '#type' => 'select',
-      '#title' => t('SQL Function'),
-      '#description' => t('Choose which SQL function to apply'),
-        '#options' => array(
-          '' => t('<select>'),
-          'ascii' => t('Ascii'),
-          'format' => t('Format'),
-          'hex' => t('Hex'),
-          'length' => t('Length'),
-          'locate' => t('Locate'),
-          'lower' => t('Lower'),
-          'oct' => t('Oct'),
-          'ord' => t('Ord'),
-          'reverse' => t('Reverse'),
-          'right' => t('Right'),
-          'rpad' => t('Rpad'),
-          'soundex' => t('Soundex'),
-          'substring' => t('Substring'),
-          'substring_index' => t('Substring Index'),
-          'unhex' => t('Unhex'),
-          'upper' => t('Upper')
-      ),
-      '#default_value' => isset($_this->options['veo_functions']['veo_fct'])  ? $_this->options['veo_functions']['veo_fct'] : NULL
+    '#type' => 'select',
+    '#title' => t('SQL Function'),
+    '#description' => t('Choose which SQL function to apply'),
+    '#options' => array(
+      '' => t('<select>'),
+      'ascii' => t('Ascii'),
+      'format' => t('Format'),
+      'hex' => t('Hex'),
+      'length' => t('Length'),
+      'locate' => t('Locate'),
+      'lower' => t('Lower'),
+      'oct' => t('Oct'),
+      'ord' => t('Ord'),
+      'reverse' => t('Reverse'),
+      'right' => t('Right'),
+      'rpad' => t('Rpad'),
+      'soundex' => t('Soundex'),
+      'substring' => t('Substring'),
+      'substring_index' => t('Substring Index'),
+      'unhex' => t('Unhex'),
+      'upper' => t('Upper')
+    ),
+    '#default_value' => isset($_this->options['veo_functions']['veo_fct']) ? $_this->options['veo_functions']['veo_fct']
+        : NULL
   );
 
   $form['veo_functions']['veo_fct_parameters'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Parameters'),
-      '#description' => t('If the selected SQL function needs extra parameters, add them here, comma separated.'),
-      '#default_value' => $_this->options['veo_functions']['veo_fct_parameters'],
+    '#type' => 'textfield',
+    '#title' => t('Parameters'),
+    '#description' => t('If the selected SQL function needs extra parameters, add them here, comma separated.'),
+    '#default_value' => $_this->options['veo_functions']['veo_fct_parameters'],
   );
 
   $form['veo_operator'] = array(
-      '#type' => 'fieldset',
-      '#title' => 'Argument operator'
+    '#type' => 'fieldset',
+    '#title' => 'Argument operator'
   );
 
   $form['veo_operator']['veo_operator'] = array(
-      '#type' => 'select',
-      '#title' => t('Operator'),
-      '#description' => t('Choose the operator'),
-      '#options' => array(
-          'op_equal' => t('Is equal to'),
-          'op_nequal' => t('Is not equal to'),
-          'op_contains' => t('Contains'),
-          'op_contains_any_word' => t('Contains any words'),
-          'op_contains_all_words' => t('Contains all words'),
-          'op_start_with' => t('Start with'),
-          'op_nstart_with' => t('Does not start with'),
-          'op_ends_with' => t('Ends with'),
-          'op_nends_with' => t('Does not end with'),
-          'op_ncontains' => t('Does not contain'),
-          'op_greater' => t('Is greater'),
-          'op_greater_equal' => t('Is greater or equal'),
-          'op_lesser' => t('Is lesser'),
-          'op_lesser_equal' => t('Is lesser or equal'),
-          'op_different' => t('Is different'),
-          'op_between' => t('Is between'),
-          'op_nbetween' => t('Is not between'),
-      ),
-      '#default_value' => $_this->options['veo_operator']['veo_operator'],
+    '#type' => 'select',
+    '#title' => t('Operator'),
+    '#description' => t('Choose the operator'),
+    '#options' => array(
+      'op_equal' => t('Is equal to'),
+      'op_nequal' => t('Is not equal to'),
+      'op_contains' => t('Contains'),
+      'op_contains_any_word' => t('Contains any words'),
+      'op_contains_all_words' => t('Contains all words'),
+      'op_start_with' => t('Start with'),
+      'op_nstart_with' => t('Does not start with'),
+      'op_ends_with' => t('Ends with'),
+      'op_nends_with' => t('Does not end with'),
+      'op_ncontains' => t('Does not contain'),
+      'op_greater' => t('Is greater'),
+      'op_greater_equal' => t('Is greater or equal'),
+      'op_lesser' => t('Is lesser'),
+      'op_lesser_equal' => t('Is lesser or equal'),
+      'op_different' => t('Is different'),
+      'op_between' => t('Is between'),
+      'op_nbetween' => t('Is not between'),
+    ),
+    '#default_value' => $_this->options['veo_operator']['veo_operator'],
   );
 }
 
 function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
+
+  dpm($field, 'field');
+  dpm($fct, 'fct');
+  dpm($fct_parameters, 'fct_parameters');
+
+
   switch ($fct) {
     case 'ascii':
       $field = "ASCII($field)";
       break;
     case 'format':
-      $fct_parameters = (int) $fct_parameters;
+      $fct_parameters = (int)$fct_parameters;
       $field = "FORMAT($field, $fct_parameters)";
       break;
     case 'hex':
@@ -107,7 +114,7 @@ function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
       $field = "REVERSE($field)";
       break;
     case 'right':
-      $fct_parameters = (int) $fct_parameters;
+      $fct_parameters = (int)$fct_parameters;
       $field = "RIGHT($field, $fct_parameters)";
       break;
     case 'rpad':
@@ -133,32 +140,33 @@ function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
       break;
   }
 
-   return $field;
+  return $field;
 
-  }
-  
+}
+
 function views_extra_operator_query_string(&$_this) {
+
   $argument = $_this->argument;
   $multi = false;
-  
+
   $operator_multi = array('op_equal', 'op_nequal', 'op_ncontains');
-  
+
+  $fct = $_this->options['veo_functions']['veo_fct'];
+  $fct_parameters = $_this->options['veo_functions']['veo_fct_parameters'];
+
   if (!empty($_this->options['break_phrase']) && (in_array($_this->options['veo_operator']['veo_operator'], $operator_multi))) {
     views_break_phrase($argument, &$this);
-    //print_r($_this->value);
     if (count($_this->value) > 1) {
       $multi = true;
     }
   }
   else {
-    $fct = $_this->options['veo_functions']['veo_fct'];
-    $fct_parameters = $_this->options['veo_functions']['veo_fct_parameters'];
-  
+
     if (!empty($_this->options['transform_dash'])) {
       $argument = strtr($argument, '-', ' ');
     }
   }
-  
+
   $_this->ensure_my_table();
   if (empty($_this->options['glossary'])) {
     $field = "$_this->table_alias.$_this->real_field";
@@ -173,28 +181,42 @@ function views_extra_operator_query_string(&$_this) {
       $_this->options['veo_operator']['veo_operator'] = 'op_nequal';
     }
   }
- 
+
   $field = views_extra_operator_rewrite_field($field, $fct, $fct_parameters);
-  
+
   switch ($_this->options['veo_operator']['veo_operator']) {
     case 'op_equal':
       if ($multi) {
-        $placeholders = implode(', ', array_fill(0, sizeof($_this->value), '%d'));
-        $_this->query->add_where(0, "$field IN ($placeholders)", $_this->value);
+
+        $i=0;
+        foreach($_this->value as $value) {
+          $ph = ':val'.$i++;
+          $values[$ph] = $value;
+          $placeholders = implode(',', array_keys($values));
+        }
+
+        $_this->query->add_where_expression(0, "$field IN ($placeholders)", $values);
       } else {
-        $_this->query->add_where(0, "$field = '%s'", $argument);
+        $_this->query->add_where_expression(0, "$field = :argument", array(':argument'=>$argument));
       }
       break;
     case 'op_nequal':
       if ($multi) {
-        $placeholders = implode(', ', array_fill(0, sizeof($_this->value), '%d'));
-        $_this->query->add_where(0, "$field NOT IN ($placeholders)", $_this->value);
+
+        $i=0;
+        foreach($_this->value as $value) {
+          $ph = ':val'.$i++;
+          $values[$ph] = $value;
+          $placeholders = implode(',', array_keys($values));
+        }
+
+        $_this->query->add_where_expression(0, "$field NOT IN ($placeholders)", $values);
       } else {
-        $_this->query->add_where(0, "$field != '%s'", $argument);
+        $_this->query->add_where_expression(0, "$field != :argument", array(':argument'=>$argument));
       }
       break;
     case 'op_contains':
-      $_this->query->add_where(0, "$field LIKE '%%%s%%'", $argument);
+      $_this->query->add_where_expression(0, "$field LIKE :argument", array(':argument'=>'%%'.$argument.'%%'));
       break;
     case 'op_contains_any_word':
       $where = array();
@@ -208,14 +230,16 @@ function views_extra_operator_query_string(&$_this) {
         }
         $words = trim($match[2], ',?!();:-');
         $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
+        $i=0;
         foreach ($words as $word) {
-          $where[] = "$upper($field) LIKE $upper('%%%s%%')";
-          $values[] = trim($word, " ,!?");
+          $ph = '%%:val'.$i++.'%%';
+          $where[] = "$upper($field) LIKE $upper({$ph})";
+          $values[$ph] = '%%'.trim($word, " ,!?").'%%';
         }
       }
 
       $where = '(' . implode(' OR ', $where) . ')';
-      $_this->query->add_where(0, $where, $values);
+      $_this->query->add_where_expression(0, $where, $values);
       break;
     case 'op_contains_all_words':
       $where = array();
@@ -229,88 +253,93 @@ function views_extra_operator_query_string(&$_this) {
         }
         $words = trim($match[2], ',?!();:-');
         $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
+        $i=0;
         foreach ($words as $word) {
-          $where[] = "$upper($field) LIKE $upper('%%%s%%')";
-          $values[] = trim($word, " ,!?");
+          $ph = '%%:val'.$i++.'%%';
+          $where[] = "$upper($field) LIKE $upper({$ph})";
+          $values[$ph] = '%%'.trim($word, " ,!?").'%%';
         }
       }
 
       $where = implode(' AND ', $where);
-      $_this->query->add_where(0, $where, $values);
+      $_this->query->add_where_expression(0, $where, $values);
       break;
     case 'op_start_with':
-      $_this->query->add_where(0, "$field LIKE '%s%%'", $argument);
+      $_this->query->add_where_expression(0, "$field LIKE :argument", array(':argument'=>$argument.'%%'));
       break;
     case 'op_nstart_with':
-      $_this->query->add_where(0, "$field NOT LIKE '%s%%'", $argument);
+      $_this->query->add_where_expression(0, "$field NOT LIKE :argument", array(':argument'=>$argument.'%%'));
       break;
     case 'op_ends_with':
-      $_this->query->add_where(0, "$field LIKE '%%%s'", $argument);
+      $_this->query->add_where_expression(0, "$field LIKE :argument", array(':argument'=>'%%'.$argument));
       break;
     case 'op_nends_with':
-      $_this->query->add_where(0, "$field NOT LIKE '%%%s'", $argument);
+      // Add a multi option here.
+      $_this->query->add_where_expression(0, "$field NOT LIKE :argument", array(':argument'=>'%%'.$argument));
       break;
-    case 'op_ncontains':   
+    case 'op_ncontains':
       if ($multi) {
+        $i=0;
         foreach ($_this->value as $value) {
-          $where[]  = "$field NOT LIKE '%%%s%%'";
-          $values[] = trim($value, " ,!?"); 
+          $ph = '%%:val'.$i++.'%%';
+          $where[] = "$field NOT LIKE {$ph}";
+          $values[$ph] = '%%'.trim($value, " ,!?").'%%';
         }
-        $where = implode(' '.$_this->operator.' ', $where);
-        $_this->query->add_where(0, $where, $values);  
-        
+        $where = implode(' ' . strtoupper($_this->operator) . ' ', $where);
+        $_this->query->add_where_expression(0, $where, $values);
+
       } else {
-        $_this->query->add_where(0, "$field NOT LIKE '%%%s%%'", $argument);      
+        $_this->query->add_where_expression(0, "$field NOT LIKE :argument", array(':argument' => '%%'.$argument.'%%'));
       }
       break;
     case 'op_greater':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where(0, "$field > %s", $argument);
+      $_this->query->add_where_expression(0, "$field > :argument", array(':argument' => $argument));
       break;
     case 'op_greater_equal':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where(0, "$field >= %s", $argument);
+      $_this->query->add_where_expression(0, "$field >= :argument", array(':argument' => $argument));
       break;
     case 'op_lesser':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where(0, "$field < %s", $argument);
+      $_this->query->add_where_expression(0, "$field < :argument", array(':argument' => $argument));
       break;
     case 'op_lesser_equal':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where(0, "$field <= %s", $argument);
+      $_this->query->add_where_expression(0, "$field <= :argument", array(':argument' => $argument));
       break;
     case 'op_different':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where(0, "$field <> %s", $argument);
+      $_this->query->add_where_expression(0, "$field <> :argument", array(':argument' => $argument));
       break;
     case 'op_between':
       list($min, $max) = explode(",", $argument);
       $min = (is_numeric($min)) ? $min : strlen($min);
       $max = (is_numeric($max)) ? $max : strlen($max);
-      $_this->query->add_where(0, "$field BETWEEN %d AND %d", $min, $max);
+      $_this->query->add_where_expression(0, "$field BETWEEN :min AND :max", array(':min' => $min, ':max' => $max));
       break;
     case 'op_nbetween':
       list($min, $max) = explode(",", $argument);
       $min = (is_numeric($min)) ? $min : strlen($min);
       $max = (is_numeric($max)) ? $max : strlen($max);
-      $_this->query->add_where(0, "$field NOT BETWEEN %d AND %d", $min, $max);
+      $_this->query->add_where_expression(0, "$field NOT BETWEEN :min AND :max", array(':min' => $min, ':max' => $max));
       break;
   }
+
 }
 
-
 function views_extra_operator_query_sort_string(&$_this) {
-  
+
   $sort = $_this->argument;
-  
+
   $fct = $_this->options['filter_fieldset']['filter_fct'];
   $fct_parameters = $_this->options['filter_fieldset']['filter_fct_parameters'];
 
   $_this->ensure_my_table();
 
   $field = $_this->real_field;
-  
+
   $_this->sort_field = views_extra_operator_rewrite_field($field, $fct, $fct_parameters);
-  
+
 }
 

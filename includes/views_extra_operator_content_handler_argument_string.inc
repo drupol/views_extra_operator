@@ -1,12 +1,20 @@
 <?php
-module_load_include('inc', 'content', 'includes/views/handlers/content_handler_argument_string');
 module_load_include('inc', 'views_extra_operator', 'includes/views_extra_operator_common');
 
 /**
  * @file
  * This is the handler for string fields type.
  */
-class views_extra_operator_content_handler_argument_string extends content_handler_argument_string {
+class views_extra_operator_content_handler_argument_string extends views_handler_argument_string {
+
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['veo_operator']['veo_operator'] = array('default' => FALSE);
+    $options['veo_functions']['veo_fct'] = array('default' => FALSE);
+
+    return $options;
+  }
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);

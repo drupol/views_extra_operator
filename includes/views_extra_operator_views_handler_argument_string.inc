@@ -7,6 +7,15 @@ module_load_include('inc', 'views_extra_operator', 'includes/views_extra_operato
  */
 class views_extra_operator_views_handler_argument_string extends views_handler_argument_string {
 
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['veo_operator']['veo_operator'] = array('default' => FALSE);
+    $options['veo_functions']['veo_fct'] = array('default' => FALSE);
+
+    return $options;
+  }
+
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     views_extra_operator_options_form_string($this, $form, $form_state);

@@ -1,5 +1,11 @@
 name = "Views Extra Operator"
 description = "Apply functions and/or adds extra operator to views arguments fields, sort fields."
-core = "6.x"
+core = "7.x"
 dependencies[] = views
 package = "Views"
+files[] = includes/views_extra_operator_content_handler_argument_numeric.inc
+files[] = includes/views_extra_operator_content_handler_argument_string.inc
+files[] = includes/views_extra_operator_views_handler_argument_node_nid.inc
+files[] = includes/views_extra_operator_views_handler_argument_numeric.inc
+files[] = includes/views_extra_operator_views_handler_argument_string.inc
+files[] = includes/views_extra_operator_views_sort.inc

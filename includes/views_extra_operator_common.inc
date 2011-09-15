@@ -75,11 +75,6 @@ function views_extra_operator_options_form_string(&$_this, &$form, &$form_state)
 
 function views_extra_operator_rewrite_field($field, $fct, $fct_parameters) {
 
-  dpm($field, 'field');
-  dpm($fct, 'fct');
-  dpm($fct_parameters, 'fct_parameters');
-
-
   switch ($fct) {
     case 'ascii':
       $field = "ASCII($field)";
@@ -149,7 +144,7 @@ function views_extra_operator_query_string(&$_this) {
   $argument = $_this->argument;
   $multi = false;
 
-  $operator_multi = array('op_equal', 'op_nequal', 'op_ncontains');
+  $operator_multi = array('op_equal', 'op_nequal', 'op_ncontains', 'op_nends_with');
 
   $fct = $_this->options['veo_functions']['veo_fct'];
   $fct_parameters = $_this->options['veo_functions']['veo_fct_parameters'];
@@ -161,7 +156,6 @@ function views_extra_operator_query_string(&$_this) {
     }
   }
   else {
-
     if (!empty($_this->options['transform_dash'])) {
       $argument = strtr($argument, '-', ' ');
     }
@@ -187,41 +181,44 @@ function views_extra_operator_query_string(&$_this) {
   switch ($_this->options['veo_operator']['veo_operator']) {
     case 'op_equal':
       if ($multi) {
-
-        $i=0;
-        foreach($_this->value as $value) {
-          $ph = ':val'.$i++;
+        $i = 0;
+        foreach ($_this->value as $value) {
+          $ph = ':val' . $i++;
           $values[$ph] = $value;
           $placeholders = implode(',', array_keys($values));
         }
-
-        $_this->query->add_where_expression(0, "$field IN ($placeholders)", $values);
+        $where_expr = "$field IN ($placeholders)";
+        $where_value = $values;
       } else {
-        $_this->query->add_where_expression(0, "$field = :argument", array(':argument'=>$argument));
+        $where_expr = "$field = :argument";
+        $where_value = array(':argument' => $argument);
       }
       break;
     case 'op_nequal':
       if ($multi) {
-
-        $i=0;
-        foreach($_this->value as $value) {
-          $ph = ':val'.$i++;
+        $i = 0;
+        foreach ($_this->value as $value) {
+          $ph = ':val' . $i++;
           $values[$ph] = $value;
           $placeholders = implode(',', array_keys($values));
         }
-
-        $_this->query->add_where_expression(0, "$field NOT IN ($placeholders)", $values);
+        $where_expr = "$field NOT IN ($placeholders)";
+        $where_value = $values;
       } else {
-        $_this->query->add_where_expression(0, "$field != :argument", array(':argument'=>$argument));
+        $where_expr = "$field != :argument";
+        $where_value = array(':argument' => $argument);
       }
       break;
     case 'op_contains':
-      $_this->query->add_where_expression(0, "$field LIKE :argument", array(':argument'=>'%%'.$argument.'%%'));
+      $where_expr = "$field LIKE :argument";
+      $where_value = array(':argument' => '%%' . $argument . '%%');
       break;
     case 'op_contains_any_word':
       $where = array();
       preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' ' . $argument, $matches, PREG_SET_ORDER);
+      $i = 0;
       foreach ($matches as $match) {
+        $ph = '%%:val' . $i++ . '%%';
         $phrase = FALSE;
         // Strip off phrase quotes
         if ($match[2]{0} == '"') {
@@ -230,21 +227,20 @@ function views_extra_operator_query_string(&$_this) {
         }
         $words = trim($match[2], ',?!();:-');
         $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
-        $i=0;
         foreach ($words as $word) {
-          $ph = '%%:val'.$i++.'%%';
-          $where[] = "$upper($field) LIKE $upper({$ph})";
-          $values[$ph] = '%%'.trim($word, " ,!?").'%%';
+          $where[] = "$field LIKE {$ph}";
+          $values[$ph] = '%%' . trim($word, " ,!?") . '%%';
         }
       }
-
-      $where = '(' . implode(' OR ', $where) . ')';
-      $_this->query->add_where_expression(0, $where, $values);
+      $where_expr = implode(' OR ', $where);
+      $where_value = $values;
       break;
     case 'op_contains_all_words':
       $where = array();
       preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' ' . $argument, $matches, PREG_SET_ORDER);
+      $i = 0;
       foreach ($matches as $match) {
+        $ph = '%%:val' . $i++ . '%%';
         $phrase = FALSE;
         // Strip off phrase quotes
         if ($match[2]{0} == '"') {
@@ -253,78 +249,102 @@ function views_extra_operator_query_string(&$_this) {
         }
         $words = trim($match[2], ',?!();:-');
         $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
-        $i=0;
         foreach ($words as $word) {
-          $ph = '%%:val'.$i++.'%%';
-          $where[] = "$upper($field) LIKE $upper({$ph})";
-          $values[$ph] = '%%'.trim($word, " ,!?").'%%';
+          $where[] = "$field LIKE {$ph}";
+          $values[$ph] = '%%' . trim($word, " ,!?") . '%%';
         }
       }
-
-      $where = implode(' AND ', $where);
-      $_this->query->add_where_expression(0, $where, $values);
+      $where_expr = implode(' AND ', $where);
+      $where_value = $values;
       break;
     case 'op_start_with':
-      $_this->query->add_where_expression(0, "$field LIKE :argument", array(':argument'=>$argument.'%%'));
+      $where_expr = "$field LIKE :argument";
+      $where_value = array(':argument' => $argument . '%%');
       break;
     case 'op_nstart_with':
-      $_this->query->add_where_expression(0, "$field NOT LIKE :argument", array(':argument'=>$argument.'%%'));
+      $where_expr = "$field NOT LIKE :argument";
+      $where_value = array(':argument' => $argument . '%%');
       break;
     case 'op_ends_with':
-      $_this->query->add_where_expression(0, "$field LIKE :argument", array(':argument'=>'%%'.$argument));
+      $where_expr = "$field LIKE :argument";
+      $where_value = array(':argument' => '%%' . $argument);
       break;
     case 'op_nends_with':
-      // Add a multi option here.
-      $_this->query->add_where_expression(0, "$field NOT LIKE :argument", array(':argument'=>'%%'.$argument));
+      if ($multi) {
+        $i = 0;
+        foreach ($_this->value as $value) {
+          $ph = '%%:val' . $i++;
+          $where[] = "$field NOT LIKE {$ph}";
+          $values[$ph] = '%%' . trim($value, " ,!?");
+        }
+        $where_expr = implode(' OR ', $where);
+        $where_value = $values;
+      } else {
+        $where_expr = "$field NOT LIKE :argument";
+        $where_value = array(':argument' => '%%' . $argument);
+      }
       break;
     case 'op_ncontains':
       if ($multi) {
-        $i=0;
+        $i = 0;
         foreach ($_this->value as $value) {
-          $ph = '%%:val'.$i++.'%%';
+          $ph = '%%:val' . $i++ . '%%';
           $where[] = "$field NOT LIKE {$ph}";
-          $values[$ph] = '%%'.trim($value, " ,!?").'%%';
+          $values[$ph] = '%%' . trim($value, " ,!?") . '%%';
         }
-        $where = implode(' ' . strtoupper($_this->operator) . ' ', $where);
-        $_this->query->add_where_expression(0, $where, $values);
-
+        $where_expr = implode(' ' . strtoupper($_this->operator) . ' ', $where);
+        $where_value = $values;
       } else {
-        $_this->query->add_where_expression(0, "$field NOT LIKE :argument", array(':argument' => '%%'.$argument.'%%'));
+        $where_expr = "$field NOT LIKE :argument";
+        $where_value = array(':argument' => '%%' . $argument . '%%');
       }
       break;
     case 'op_greater':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where_expression(0, "$field > :argument", array(':argument' => $argument));
+      $where_expr = "$field > :argument";
+      $where_value = array(':argument' => $argument);
       break;
     case 'op_greater_equal':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where_expression(0, "$field >= :argument", array(':argument' => $argument));
+      $where_expr = "$field >= :argument";
+      $where_value = array(':argument' => $argument);
       break;
     case 'op_lesser':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where_expression(0, "$field < :argument", array(':argument' => $argument));
+      $where_expr = "$field < :argument";
+      $where_value = array(':argument' => $argument);
       break;
     case 'op_lesser_equal':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where_expression(0, "$field <= :argument", array(':argument' => $argument));
+      $where_expr = "$field <= :argument";
+      $where_value = array(':argument' => $argument);
       break;
     case 'op_different':
       $argument = (is_numeric($argument)) ? $argument : strlen($argument);
-      $_this->query->add_where_expression(0, "$field <> :argument", array(':argument' => $argument));
+      $where_expr = "$field <> :argument";
+      $where_value = array(':argument' => $argument);
       break;
     case 'op_between':
       list($min, $max) = explode(",", $argument);
       $min = (is_numeric($min)) ? $min : strlen($min);
       $max = (is_numeric($max)) ? $max : strlen($max);
-      $_this->query->add_where_expression(0, "$field BETWEEN :min AND :max", array(':min' => $min, ':max' => $max));
+      $where_expr = "$field BETWEEN :min AND :max";
+      $where_value = array(':min' => $min, ':max' => $max);
       break;
     case 'op_nbetween':
       list($min, $max) = explode(",", $argument);
       $min = (is_numeric($min)) ? $min : strlen($min);
       $max = (is_numeric($max)) ? $max : strlen($max);
-      $_this->query->add_where_expression(0, "$field NOT BETWEEN :min AND :max", array(':min' => $min, ':max' => $max));
+      $where_expr = "$field NOT BETWEEN :min AND :max";
+      $where_value = array(':min' => $min, ':max' => $max);
       break;
   }
+  /*
+  dpm($multi, 'Multi');
+  dpm($where_expr, 'Where Expression');
+  dpm($where_value, 'Where Value');
+  */
+  $_this->query->add_where_expression(0, $where_expr, $where_value);
 
 }
 

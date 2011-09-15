@@ -10,8 +10,8 @@ class views_extra_operator_views_sort extends views_handler_sort {
     if (empty($this->options['veo_functions']['veo_fct'])) {
       $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
     } else {
-      $this->sort_field = views_extra_operator_rewrite_field($this->table_alias.'.'.$this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
-      $this->query->add_orderby(NULL, $this->sort_field, $this->options['order'], $this->options['veo_functions']['veo_fct'].'_'.$this->table_alias.'_'.$this->real_field);
+      $this->sort_field = views_extra_operator_rewrite_field($this->table_alias . '.' . $this->real_field, $this->options['veo_functions']['veo_fct'], $this->options['veo_functions']['veo_fct_parameters']);
+      $this->query->add_orderby(NULL, $this->sort_field, $this->options['order'], $this->options['veo_functions']['veo_fct'] . '_' . $this->table_alias . '_' . $this->real_field);
     }
   }
 
@@ -38,7 +38,7 @@ class views_extra_operator_views_sort extends views_handler_sort {
 
     $fct = null;
     if ($this->options['veo_functions']['veo_fct']) {
-      $fct = strtoupper($this->options['veo_functions']['veo_fct']).'() ';
+      $fct = strtoupper($this->options['veo_functions']['veo_fct']) . '() ';
     }
 
     return '<span class="views-ascending"><span>' . $fct . '' . $type . '</span></span>';

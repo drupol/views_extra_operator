@@ -12,6 +12,7 @@ class views_extra_operator_views_handler_argument_numeric extends views_handler_
 
     $options['veo_operator']['veo_operator'] = array('default' => FALSE);
     $options['veo_functions']['veo_fct'] = array('default' => FALSE);
+    $options['veo_functions']['veo_fct_parameters'] = array('default' => FALSE);
 
     return $options;
   }
